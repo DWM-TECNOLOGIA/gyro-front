@@ -1,0 +1,31 @@
+@use './reset';
+@use './original';
+
+/* Scrollbar principal (Webkit - Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Track (fundo da barra) */
+::-webkit-scrollbar-track {
+  background: rgba(30, 30, 30, 0.2);
+  border-radius: 4px;
+}
+
+/* Thumb (a barra que arrasta) */
+::-webkit-scrollbar-thumb {
+  background: rgba(90, 90, 90, 0.6);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+
+  &:hover {
+    background: rgba(120, 120, 120, 0.8);
+  }
+}
+
+/* Firefox (suporte mais limitado) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(90, 90, 90, 0.6) rgba(30, 30, 30, 0.2);
+}

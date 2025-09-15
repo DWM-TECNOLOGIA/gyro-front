@@ -1,0 +1,18 @@
+{
+  "development": {
+    "backend": "https://yq4ko7rnd8.execute-api.us-east-1.amazonaws.com",
+    "socket": "wss://link-socket-dev"
+  },
+  "staging": {
+    "backend": "https://link-backend-stg",
+    "socket": "wss://link-socket-stg"
+  },
+  "uat": {
+    "backend": "https://link-backend-uat",
+    "socket": "wss://link-socket-uat"
+  },
+  "production": {
+    "backend": "https://link-backend",
+    "socket": "wss://link-socket"
+  }
+}

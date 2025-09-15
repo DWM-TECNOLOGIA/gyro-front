@@ -1,0 +1,72 @@
+// Light Theme (Default)
+// [data-bs-theme='light'] {
+//   --bs-body-bg: #ffffff;
+//   --bs-body-color: #212529;
+//   // Adicione outras variáveis de cores conforme necessário
+// }
+
+// Dark Theme
+:root {
+  // Dark theme colors
+  --dark-primary: #121212; // Cor de fundo principal do app
+  --dark-secondary: #1e1e1e; // Cor para cards, containers secundários
+  --dark-navbar: #242424; // Cor específica para navbar
+  --dark-accent: #2d2d2d; // Cor para elementos de destaque
+  --dark-hover: #333333; // Cor para estados hover
+  --dark-border: #404040; // Cor para bordas
+  --dark-text-primary: #ffffff; // Texto principal
+  --dark-text-secondary: #b3b3b3; // Texto secundário
+  --dark-placeholder: #808080; // Cor para placeholders
+}
+
+* {
+  // Cores base do Bootstrap Vue
+  --bs-body-bg: var(--dark-primary);
+  --bs-body-color: var(--dark-text-primary);
+
+  // Customização de componentes específicos
+  --bs-navbar-bg: var(--dark-navbar);
+  --bs-card-bg: var(--dark-secondary);
+  --bs-dropdown-bg: var(--dark-secondary);
+  --bs-border-color: var(--dark-border);
+
+  // Estados de interação
+  --bs-btn-hover-bg: var(--dark-hover);
+
+  // Textos
+  --bs-text-muted: var(--dark-text-secondary);
+
+  // Outros elementos
+  --bs-modal-bg: var(--dark-secondary);
+  --bs-table-bg: var(--dark-secondary);
+  --bs-list-group-bg: var(--dark-secondary);
+}
+
+// Customizações específicas de componentes
+.navbar {
+  background-color: var(--dark-navbar) !important;
+}
+
+.card {
+  background-color: var(--dark-secondary) !important;
+}
+
+.dropdown-menu {
+  background-color: var(--dark-secondary) !important;
+}
+
+// Hover states
+.btn:hover {
+  background-color: var(--dark-hover);
+}
+
+// Bordas
+.border {
+  border-color: var(--dark-border) !important;
+}
+
+// Placeholders
+.form-control::placeholder {
+  color: var(--dark-placeholder) !important;
+  opacity: 1;
+}
