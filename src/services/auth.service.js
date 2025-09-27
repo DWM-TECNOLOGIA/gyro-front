@@ -4,10 +4,10 @@ import { http, httpUser } from "@/http";
 const login = (payload) => httpUser.post(`/user/login`, { ...payload });
 
 const forgotPassword = (payload) =>
-	httpUser.post(`/auth/forgot`, { ...payload });
+	httpUser.post(`/user/forgot-password`, { ...payload });
 
 const resetPassword = (payload) =>
-	httpUser.put(`/auth/redefine`, { ...payload });
+	httpUser.put(`/user/new-password`, { ...payload });
 
 const refreshToken = (payload) => http.post(`/auth/refresh`, { ...payload });
 

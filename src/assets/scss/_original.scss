@@ -17,19 +17,20 @@ body {
 p {
   font-style: normal;
   font-weight: 300;
+  font-size: 14px;
   letter-spacing: 0.01em;
   margin-bottom: 0px !important;
 
-  color: #000000;
+  color: #fff;
 }
 
 a {
   transition: all 0.3s ease;
-  color: #000000;
+  color: #fff;
   text-decoration: none;
 
   &:hover {
-    color: #ea1d2c;
+    color: var(--bs-primary);
   }
 }
 
@@ -40,7 +41,7 @@ button {
   border: 0;
   width: 100%;
 
-  background: #ea1d2c;
+  background: var(--bs-primary);
   border-radius: 3px;
   padding: 15px;
 
@@ -54,7 +55,7 @@ button {
   transition: all 0.3s ease;
 
   &:hover {
-    background: #ff5560;
+    background: var(--bs-primary-text-emphasis);
   }
 
   .lds-ellipsis {
@@ -71,7 +72,7 @@ button {
 }
 
 .tag {
-  background: #ec1d2c;
+  background: var(--bs-primary);
   border-radius: 15px;
   padding: 3px 15px;
 
@@ -1077,7 +1078,6 @@ a.hover-black:hover {
   width: 100%;
   justify-content: space-between;
 }
-
 
 .max-45 {
   max-width: 45%;

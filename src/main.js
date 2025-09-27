@@ -7,7 +7,7 @@ import store from "./store";
 import '@/assets/scss/themes.scss'
 
 import bootstrapVue from "./plugins/bootstrap-vue";
-import "./plugins/vue-moment";
+import vueMoment from "./plugins/vue-moment";
 
 import TagMasks from "./utils/tagMasks"; // Máscaras
 
@@ -39,6 +39,7 @@ app.use(router)
 app.use(store)
 app.use(TagMasks)
 app.use(bootstrapVue)
+app.use(vueMoment)
 
 app.config.globalProperties.$toast = useToast();
 

@@ -1,18 +1,14 @@
-import { http } from "@/http";
-import { serialize } from "@/utils/serialize";
-
-const getList = (payload) => http.get(`/teacher/list-student-workouts/${payload.studentId}${serialize(payload.params)}`);
-
-const getById = (payload) => http.get(`/teacher/${payload.teacherId}/student/${payload.studentId}`);
-
-const create = (payload) => http.post(`/user/create`, { ...payload });
-
-const remove = (payload) => http.delete(`/teacher/${payload.teacherId}/student/${payload.studentId}`);
-
-
-export const trainingService = {
-    getList,
-    getById,
-    create,
-    remove,
+// Temporary mocked service to support Vuex-first development
+const getList = async (payload) => {
+    const mockItems = [
+        { workoutNumber: 1, workoutName: 'Upper body A', workoutDescription: 'Push focus', days: ['Mon', 'Thu'] },
+        { workoutNumber: 2, workoutName: 'Lower body B', workoutDescription: 'Squat focus', days: ['Tue', 'Fri'] }
+    ];
+    return Promise.resolve({ data: { data: { items: mockItems, count: mockItems.length, nextPageId: null } } });
 };
+
+const getById = async () => Promise.resolve({ data: { data: {} } });
+const create = async () => Promise.resolve({ data: { data: {} } });
+const remove = async () => Promise.resolve({ data: { data: {} } });
+
+export const trainingService = { getList, getById, create, remove };

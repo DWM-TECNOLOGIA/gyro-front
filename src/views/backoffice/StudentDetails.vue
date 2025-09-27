@@ -1,263 +1,127 @@
 <template>
-  <BCard no-body class="student-details-card">
-    <BCardBody class="p-4">
-      <!-- Informações do Aluno -->
-      <div class="student-info mb-4">
-        <div class="d-flex align-items-center">
-          <div class="avatar-container me-3">
-            <img v-if="student?.avatar" :src="student.avatar" :alt="`Avatar de ${student?.name}`" class="avatar-img" />
-            <div v-else class="avatar-default">
-              <MdiUserCircle />
-            </div>
-          </div>
-          <div>
-            <h3 class="mb-2">{{ student?.name }}</h3>
-            <p class="text-muted mb-1">{{ $formatPhone(student?.cellphone) }}</p>
-            <p class="text-muted small">Cadastrado em {{ $formatDateUtc(student?.createdAt) }}</p>
-          </div>
-        </div>
-      </div>
+  <div class="student-details">
+    <StudentHeader :student="student" @edit="onEditProfile" />
 
-      <!-- Lista de Treinos -->
-      <div class="trainings-section">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h4 class="mb-0">Treinos</h4>
-          <StandardButton variant="primary" class="mw-130" @click="openNewTrainingModal">
-            <IMdiPlus color="white" class="me-2" />
-            Novo treino
-          </StandardButton>
-        </div>
-
-        <ReusableTable
-          :items="trainings"
-          :fields="trainingColumns"
-          :show-details="true"
-          title="Lista de Treinos"
-          :has-next-page="!!nextPageId"
-          :loading="isLoading"
-          @load-more="handleLoadMore"
-          @row-clicked="showTrainingDetails"
-        >
-          <template #details="{ item }">
-            <div class="p-3">
-              <h5>Detalhes do Treino</h5>
-              <p>{{ item.description }}</p>
-              <!-- Adicione mais detalhes do treino conforme necessário -->
-            </div>
-          </template>
-        </ReusableTable>
-      </div>
-    </BCardBody>
-  </BCard>
-
-  <!-- Modal de Novo Treino -->
-  <ConfirmModal
-    :show="showModal"
-    @update:show="(val) => (showModal = val)"
-    title="Novo Treino"
-    size="lg"
-    confirm-text="Salvar"
-    :loading="isSaving"
-    :disable-button="v$.form.$invalid || v$exercises.exercises.$invalid"
-    @close="showModal = false"
-    @confirm="handleSubmit"
-  >
-    <div class="row g-3">
-      <div class="col-12 col-md-6">
-        <InputField
-          v-model="form.workoutNumber"
-          label="Número do Treino"
-          type="number"
-          :error="v$.form.workoutNumber.$errors[0]?.$message"
-        />
-      </div>
-      <div class="col-12 col-md-6">
-        <InputField
-          v-model="form.workoutName"
-          label="Nome do Treino"
-          :error="v$.form.workoutName.$errors[0]?.$message"
-        />
-      </div>
-      <div class="col-12">
-        <InputField
-          v-model="form.workoutDescription"
-          label="Descrição"
-          type="textarea"
-          :error="v$.form.workoutDescription.$errors[0]?.$message"
-        />
-      </div>
-      <div class="col-12">
-        <label class="form-label">Dias da Semana</label>
-        <div class="d-flex flex-wrap gap-2">
-          <BFormCheckbox
-            v-for="day in availableDays"
-            :key="day.value"
-            v-model="form.days"
-            :value="day.value"
-            :error="v$.form.days.$errors[0]?.$message"
-          >
-            {{ day.text }}
-          </BFormCheckbox>
-        </div>
-      </div>
-
-      <!-- Lista de Exercícios -->
-      <div class="col-12">
-        <h5 class="mb-3">Exercícios</h5>
-        <div v-for="(exercise, index) in form.exercises" :key="index" class="card mb-3">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-              <h6 class="card-title mb-0">Exercício {{ index + 1 }}</h6>
-              <BButton variant="danger" size="sm" @click="removeExercise(index)">
-                <IMdiTrashOutline color="white" />
-              </BButton>
-            </div>
-            <div class="row g-3">
-              <div class="col-12 col-md-6">
-                <InputField
-                  v-model="exercise.exerciseName"
-                  label="Nome do Exercício"
-                  :error="v$exercises.exercises.$each.$response.$errors[index]?.exerciseName?.[0]?.$message"
-                />
-              </div>
-              <div class="col-12 col-md-6">
-                <InputField
-                  v-model="exercise.description"
-                  label="Descrição"
-                  :error="v$exercises.exercises.$each.$response.$errors[index]?.description?.[0]?.$message"
-                />
-              </div>
-
-              <!-- Steps do Exercício -->
-              <div class="col-12">
-                <h6 class="mb-3">Séries</h6>
-                <div v-for="(step, stepIndex) in exercise.steps" :key="stepIndex" class="card mb-2">
-                  <div class="card-body">
-                    <div class="row g-3">
-                      <div class="col-12">
-                        <InputField
-                          v-model="step.description"
-                          label="Descrição"
-                          :error="
-                            v$exercises.exercises.$each.$response.$errors[index]?.steps?.$each?.$response.$errors[
-                              stepIndex
-                            ]?.description?.[0]?.$message
-                          "
-                        />
-                      </div>
-                      <div class="col-6">
-                        <InputField
-                          v-model="step.repetitions"
-                          label="Repetições"
-                          type="number"
-                          :error="
-                            v$exercises.exercises.$each.$response.$errors[index]?.steps?.$each?.$response.$errors[
-                              stepIndex
-                            ]?.repetitions?.[0]?.$message
-                          "
-                        />
-                      </div>
-                      <div class="col-6">
-                        <InputField
-                          v-model="step.weight"
-                          label="Peso (kg)"
-                          type="number"
-                          :error="
-                            v$exercises.exercises.$each.$response.$errors[index]?.steps?.$each?.$response.$errors[
-                              stepIndex
-                            ]?.weight?.[0]?.$message
-                          "
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <BButton variant="outline-primary" size="sm" class="mt-2" @click="addStep(exercise)">
-                  <IMdiPlus color="white" class="me-2" />
-                  Adicionar Série
-                </BButton>
-              </div>
-            </div>
-          </div>
-        </div>
-        <BButton variant="outline-primary" @click="addExercise">
-          <IMdiPlus color="white" class="me-2" /> Adicionar Exercício
-        </BButton>
-      </div>
+    <div class="mt-3">
+      <StudentPipeline :stages="pipelineStages" />
     </div>
-  </ConfirmModal>
+
+    <BCard no-body class="mt-3">
+      <BCardHeader>
+        <BTabs v-model="activeTab" small class="student-tabs">
+          <BTab title="Progresso" title-item-class="px-3" lazy>
+            <div class="p-3">
+              <StudentProgress>
+                <template #ai>
+                  <StudentAIAnalysis />
+                </template>
+              </StudentProgress>
+            </div>
+          </BTab>
+          <BTab title="Fotos" title-item-class="px-3" lazy>
+            <div class="p-3">
+              <StudentPhotos :photos="photos" @upload="onUploadPhoto" />
+            </div>
+          </BTab>
+          <BTab title="Treinos" title-item-class="px-3" lazy>
+            <div class="p-3">
+              <StudentTrainings
+                :items="trainings"
+                :fields="trainingColumns"
+                :has-next-page="!!nextPageId"
+                :loading="isTrainingsLoading"
+                @load-more="handleLoadMore"
+                @open="showTrainingDetails"
+                @create="openNewTrainingModal"
+              />
+            </div>
+          </BTab>
+          <BTab title="Dietas" title-item-class="px-3" lazy>
+            <div class="p-3">
+              <StudentDiets @create="onCreateDiet" />
+            </div>
+          </BTab>
+          <BTab title="Configurações" title-item-class="px-3" lazy>
+            <div class="p-3">
+              <StudentSettings :settings="settings" @save="onSaveSettings" />
+            </div>
+          </BTab>
+        </BTabs>
+      </BCardHeader>
+    </BCard>
+
+    <ConfirmModal
+      :show="showModal"
+      @update:show="(val) => (showModal = val)"
+      title="Novo treino"
+      size="lg"
+      confirm-text="Salvar"
+      :loading="isTrainingsLoading"
+      :disable-button="false"
+      @close="showModal = false"
+      @confirm="handleSubmit"
+    >
+      <div class="placeholder-graph">Placeholder do formulário de treino</div>
+    </ConfirmModal>
+  </div>
 </template>
 
 <script>
-import { useVuelidate } from '@vuelidate/core'
 import { mapGetters, mapActions } from 'vuex'
-import MdiUserCircle from '~icons/mdi/user-circle'
-import { studentService } from '@/services'
-import { trainingValidations, exercisesValidations } from '@/validators/training.validator'
+import StudentHeader from '@/components/student/StudentHeader.vue'
+import StudentPipeline from '@/components/student/StudentPipeline.vue'
+import StudentProgress from '@/components/student/StudentProgress.vue'
+import StudentPhotos from '@/components/student/StudentPhotos.vue'
+import StudentTrainings from '@/components/student/StudentTrainings.vue'
+import StudentDiets from '@/components/student/StudentDiets.vue'
+import StudentSettings from '@/components/student/StudentSettings.vue'
+import StudentAIAnalysis from '@/components/student/StudentAIAnalysis.vue'
 
 export default {
   name: 'StudentDetails',
-  components: { MdiUserCircle },
-  setup() {
-    return {
-      v$: useVuelidate(),
-    }
-  },
-  validations() {
-    return {
-      ...trainingValidations,
-      ...exercisesValidations,
-    }
+  components: {
+    StudentHeader,
+    StudentPipeline,
+    StudentProgress,
+    StudentPhotos,
+    StudentTrainings,
+    StudentDiets,
+    StudentSettings,
+    StudentAIAnalysis,
   },
   data() {
     return {
-      perPage: 10,
-      nextPageId: null,
-      isLoading: false,
+      activeTab: 0,
       showModal: false,
-      student: null,
+      nextPageId: null,
+      student: {},
+      photos: [],
       trainings: [],
-      form: {
-        workoutNumber: '',
-        workoutName: '',
-        workoutDescription: '',
-        days: [],
-        exercises: [],
-      },
+      settings: { photoPeriod: 'weekly', trainingPeriod: 'weekly', dietPeriod: 'weekly' },
+      pipelineStages: [
+        { key: 'profile', title: 'Ficha de respostas', subtitle: 'Cadastro', state: 'pending', stateLabel: 'Pendente' },
+        { key: 'photos', title: 'Fotos', subtitle: 'Histórico de uploads', state: 'done', stateLabel: 'Concluído' },
+        { key: 'training', title: 'Treino atual', subtitle: 'Plano ativo', state: 'pending', stateLabel: 'Pendente' },
+        { key: 'diet', title: 'Dieta atual', subtitle: 'Plano ativo', state: 'pending', stateLabel: 'Pendente' },
+        { key: 'renewal', title: 'Renovação', subtitle: 'Vencimento', state: 'overdue', stateLabel: 'Vencido' },
+      ],
       trainingColumns: [
         { key: 'workoutNumber', label: 'Número' },
-        { key: 'workoutName', label: 'Nome do Treino' },
+        { key: 'workoutName', label: 'Nome do treino' },
         { key: 'workoutDescription', label: 'Descrição' },
-        { key: 'days', label: 'Dias', formatter: (value) => value.join(', ') },
+        { key: 'days', label: 'Dias', formatter: (value) => (value || []).join(', ') },
         { key: 'actions', label: '', sortable: false },
       ],
-      availableDays: [
-        { value: 1, text: 'Segunda' },
-        { value: 2, text: 'Terça' },
-        { value: 3, text: 'Quarta' },
-        { value: 4, text: 'Quinta' },
-        { value: 5, text: 'Sexta' },
-        { value: 6, text: 'Sábado' },
-        { value: 7, text: 'Domingo' },
-      ],
-      currentExercise: {
-        exerciseName: '',
-        description: '',
-        steps: [
-          {
-            description: '',
-            repetitions: null,
-            weight: null,
-          },
-        ],
-      },
     }
   },
   computed: {
     ...mapGetters({
-      isLoading: 'training/getIsSaving',
+      isTrainingsLoading: 'training/getIsSaving',
       getTrainings: 'training/getTrainings',
       getUserFromStorage: 'auth/getUserFromStorage',
+      getSelectedStudent: 'student/getSelectedStudent',
+      getStudentPhotos: 'student/getStudentPhotos',
+      getStudentSettings: 'student/getStudentSettings',
     }),
     studentId() {
       return this.$route.params.id
@@ -266,191 +130,95 @@ export default {
   watch: {
     getTrainings: {
       handler(newValue) {
-        if (newValue) {
-          if (!this.nextPageId) {
-            this.trainings = newValue.items || []
-          } else {
-            this.trainings = [...this.trainings, ...(newValue.items || [])]
-          }
-          this.nextPageId = newValue.nextPageId || null
-        }
+        if (!newValue) return
+        this.trainings = this.nextPageId ? [...this.trainings, ...(newValue.items || [])] : newValue.items || []
+        this.nextPageId = newValue.nextPageId || null
       },
       immediate: true,
     },
   },
-  async created() {
-    // Carrega os dados do aluno quando o componente é criado
-    if (this.id) {
-      try {
-        const response = await studentService.getStudentDetails(this.id)
-        this.student = response.data
-      } catch (error) {
-        console.error('Erro ao carregar detalhes do aluno:', error)
-        this.$toast.error('Erro ao carregar detalhes do aluno')
-      }
-    }
+  mounted() {
+    this.bootstrapData()
   },
   methods: {
     ...mapActions({
       fetchTrainings: 'training/fetchTrainings',
-      createTraining: 'training/createTraining',
-      updateTraining: 'training/updateTraining',
-      deleteTraining: 'training/deleteTraining',
+      fetchStudentDetails: 'student/fetchStudentDetails',
+      fetchStudentPhotos: 'student/fetchStudentPhotos',
+      fetchStudentSettings: 'student/fetchStudentSettings',
     }),
-
+    async bootstrapData() {
+      await Promise.all([
+        this.fetchStudentDetails({ studentId: this.studentId }),
+        this.fetchStudentPhotos({ studentId: this.studentId }),
+        this.fetchStudentSettings({ studentId: this.studentId }),
+      ])
+      this.student = this.getSelectedStudent
+      this.photos = this.getStudentPhotos
+      this.settings = this.getStudentSettings
+      this.handleFetchTrainings()
+    },
     async handleFetchTrainings() {
-      this.isLoading = true
       try {
-        const params = {
-          limit: this.perPage,
-        }
-
-        if (this.nextPageId) {
-          params.startFrom = {
-            SK: this.nextPageId.SK,
-          }
-        }
-
-        await this.fetchTrainings({
-          params,
-          studentId: this.studentId,
-        })
-      } catch ({ message }) {
-        this.handleNotification('error', message)
-      } finally {
-        this.isLoading = false
+        const params = { limit: 10 }
+        if (this.nextPageId) params.startFrom = { SK: this.nextPageId.SK }
+        await this.fetchTrainings({ params, studentId: this.studentId })
+      } catch (e) {
+        console.error(e)
+        this.$toast?.error?.('Não foi possível carregar os treinos')
       }
     },
-
-    async handleLoadMore() {
-      if (this.nextPageId?.SK) {
-        await this.handleFetchTrainings()
-      }
+    handleLoadMore() {
+      if (this.nextPageId?.SK) this.handleFetchTrainings()
     },
-
+    onEditProfile() {
+      /* placeholder */
+    },
+    onUploadPhoto() {
+      /* placeholder */
+    },
+    onCreateDiet() {
+      /* placeholder */
+    },
+    onSaveSettings() {
+      this.$toast?.success?.('Configurações salvas')
+    },
+    showTrainingDetails(row) {
+      console.log('open training', row)
+    },
     openNewTrainingModal() {
-      this.form = {
-        workoutNumber: '',
-        workoutName: '',
-        workoutDescription: '',
-        days: [],
-        exercises: [
-          {
-            exerciseName: '',
-            description: '',
-            steps: [
-              {
-                description: '',
-                repetitions: null,
-                weight: null,
-              },
-            ],
-          },
-        ],
-      }
-      this.v$.$reset()
-      this.v$exercises.$reset()
       this.showModal = true
     },
-
-    showTrainingDetails(training) {
-      // Implemente a lógica para mostrar detalhes do treino
-      console.log('Training details:', training)
-    },
-
-    addExercise() {
-      this.form.exercises.push({
-        exerciseName: '',
-        description: '',
-        steps: [
-          {
-            description: '',
-            repetitions: null,
-            weight: null,
-          },
-        ],
-      })
-    },
-
-    removeExercise(index) {
-      this.form.exercises.splice(index, 1)
-    },
-
-    addStep(exercise) {
-      exercise.steps.push({
-        description: '',
-        repetitions: null,
-        weight: null,
-      })
-    },
-
-    async handleSubmit() {
-      this.v$.$touch()
-      this.v$exercises.$touch()
-      if (this.v$.form.$invalid || this.v$exercises.exercises.$invalid) return
-
-      try {
-        await this.createTraining({
-          ...this.form,
-          userId: this.studentId,
-        })
-
-        this.handleNotification('success', 'Treino criado com sucesso')
-        this.showModal = false
-        this.nextPageId = null
-        await this.handleFetchTrainings()
-      } catch ({ message }) {
-        this.handleNotification('error', message)
-      }
-    },
-
-    handleNotification(type, text) {
-      this.$toast[type](text)
+    handleSubmit() {
+      this.showModal = false
+      this.$toast?.success?.('Treino criado')
     },
   },
 }
 </script>
 
 <style scoped lang="scss">
-.student-details-card {
+.placeholder-graph {
+  height: 160px;
+  border: 1px dashed var(--bs-gray-400);
   border-radius: 0.5rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-}
-
-.avatar-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--bs-gray-600);
 }
 
-.avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.student-tabs :deep(.nav-tabs .nav-link) {
+  color: #fff;
 
-.avatar-default {
-  width: 100%;
-  height: 100%;
-  background-color: #6c757d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 2rem;
-}
+  &:hover:not(.active) {
+    background-color: transparent !important;
+  }
 
-.mw-130 {
-  min-width: 130px;
-}
-
-@media (max-width: 768px) {
-  .student-details-card {
-    border-radius: 0;
+  &.active {
+    color: #fff;
+    font-weight: 700;
+    border-bottom: none !important;
   }
 }
 </style>
