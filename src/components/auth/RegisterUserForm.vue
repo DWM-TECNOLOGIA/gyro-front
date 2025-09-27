@@ -13,6 +13,19 @@
     />
 
     <InputField
+      id="email"
+      label="E-mail"
+      class="mt-3"
+      autocomplete="email"
+      type="email"
+      placeholder="Digite o e-mail"
+      v-model="email"
+      :errors="v$.email.$errors"
+      :dirty="v$.email.$dirty"
+      @blur="v$.email.$touch"
+    />
+
+    <InputField
       id="phone"
       label="Telefone"
       class="mt-3"
@@ -76,6 +89,7 @@ export default {
   data() {
     return {
       name: '',
+      email: '',
       phone: '',
       password: '',
       confirmPassword: '',
@@ -109,7 +123,8 @@ export default {
       try {
         await this.registerUser({
           name: this.name,
-          cellphone: this.phone.replace(/\D/g, ''),
+          email: this.email,
+          cellphone: '+55' + this.phone.replace(/\D/g, ''),
           password: this.password,
           profile: 'teacher',
         })

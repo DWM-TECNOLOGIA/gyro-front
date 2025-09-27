@@ -1,4 +1,4 @@
-import { required, minLength, helpers } from '@vuelidate/validators'
+import { required, minLength, helpers, email as emailValidator } from '@vuelidate/validators'
 
 const messages = {
     required: 'Campo obrigatório',
@@ -9,8 +9,9 @@ const messages = {
 
 
 export const loginValidations = {
-    phone: {
+    email: {
         required: helpers.withMessage(messages.required, required),
+        email: helpers.withMessage(messages.email, emailValidator),
     },
     password: {
         required: helpers.withMessage(messages.required, required),
@@ -22,8 +23,9 @@ export const loginValidations = {
 }
 
 export const resetPasswordValidations = {
-    phone: {
+    email: {
         required: helpers.withMessage(messages.required, required),
+        email: helpers.withMessage(messages.email, emailValidator),
     },
     code: {
         required: helpers.withMessage(messages.required, required),
@@ -42,6 +44,10 @@ export const adminUserValidations = {
     name: { required: helpers.withMessage(messages.required, required) },
     phone: {
         required: helpers.withMessage(messages.required, required),
+    },
+    email: {
+        required: helpers.withMessage(messages.required, required),
+        email: helpers.withMessage(messages.email, emailValidator),
     },
     password: {
         required: helpers.withMessage(messages.required, required),

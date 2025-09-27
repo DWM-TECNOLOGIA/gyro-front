@@ -1,17 +1,16 @@
 <template>
   <AuthForm @submit="handleSubmit">
     <InputField
-      id="phone"
-      label="Telefone"
+      id="email"
+      label="E-mail"
       class="mt-3"
-      autocomplete="tel"
-      type="tel"
-      placeholder="Digite o telefone"
-      v-model="phone"
-      :errors="v$.phone.$errors"
-      :dirty="v$.phone.$dirty"
-      @blur="v$.phone.$touch"
-      mask="(##) #####-####"
+      autocomplete="email"
+      type="email"
+      placeholder="Digite seu e-mail"
+      v-model="email"
+      :errors="v$.email.$errors"
+      :dirty="v$.email.$dirty"
+      @blur="v$.email.$touch"
     />
 
     <InputField
@@ -49,7 +48,7 @@ export default {
   },
   data() {
     return {
-      phone: '',
+      email: '',
       password: '',
       rememberMe: false,
       isPasswordVisible: false,
@@ -74,7 +73,7 @@ export default {
 
       try {
         await this.login({
-          cellphone: this.phone.replace(/\D/g, ''),
+          email: this.email,
           password: this.password,
         })
         this.handleNotification('success', 'Login realizado com sucesso')

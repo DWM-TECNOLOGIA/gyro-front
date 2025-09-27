@@ -1,17 +1,16 @@
 <template>
   <AuthForm @submit="handleSubmit">
     <InputField
-      id="phone"
-      label="Telefone"
+      id="email"
+      label="E-mail"
       class="mt-3"
-      autocomplete="tel"
-      type="tel"
-      placeholder="Digite o telefone"
-      v-model="phone"
-      :errors="v$.phone.$errors"
-      :dirty="v$.phone.$dirty"
-      @blur="v$.phone.$touch"
-      mask="(##) #####-####"
+      autocomplete="email"
+      type="email"
+      placeholder="Digite seu e-mail"
+      v-model="email"
+      :errors="v$.email.$errors"
+      :dirty="v$.email.$dirty"
+      @blur="v$.email.$touch"
     />
 
     <template v-if="showCodeField">
@@ -58,7 +57,7 @@ export default {
   },
   data() {
     return {
-      phone: '',
+      email: '',
       code: '',
       password: '',
       showCodeField: false,
@@ -67,7 +66,7 @@ export default {
   },
   validations() {
     return {
-      phone: resetPasswordValidations.phone,
+      email: resetPasswordValidations.email,
       code: this.showCodeField ? resetPasswordValidations.code : {},
       password: this.showCodeField ? resetPasswordValidations.password : {},
     }
@@ -89,12 +88,12 @@ export default {
 
       try {
         if (!this.showCodeField) {
-          await this.forgotPassword({ cellphone: this.phone })
+          await this.forgotPassword({ email: this.email })
           this.showCodeField = true
-          this.handleNotification('success', 'Um código foi enviado para o seu telefone')
+          this.handleNotification('success', 'Um código foi enviado para o seu e-mail')
         } else {
           await this.resetPassword({
-            cellphone: this.phone.replace(/\D/g, ''),
+            email: this.email,
             code: this.code,
             password: this.password,
           })
