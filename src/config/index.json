@@ -1,6 +1,6 @@
 {
   "development": {
-    "backend": "https://42sfjzj31j.execute-api.us-east-1.amazonaws.com",
+    "backend": "https://l908xiamhl.execute-api.us-east-1.amazonaws.com",
     "socket": "wss://link-socket-dev"
   },
   "staging": {
