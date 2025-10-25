@@ -7,11 +7,14 @@ const getById = (id) => http.get(`/users/${id}`);
 
 const create = (payload) => http.post(`/user/create`, { ...payload });
 
+const update = (payload) => http.put(`/user/update`, { ...payload });
+
 const remove = (payload) => http.delete(`/users/${payload}`);
 
 export const userService = {
 	getList,
 	getById,
 	create,
+	update,
 	remove,
 };

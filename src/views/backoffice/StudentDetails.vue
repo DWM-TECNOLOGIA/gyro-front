@@ -36,6 +36,11 @@
               />
             </div>
           </BTab>
+          <BTab title="Anamnese" title-item-class="px-3" lazy>
+            <div class="p-3">
+              <AnamneseResponsesList :clientId="studentId" />
+            </div>
+          </BTab>
           <BTab title="Dietas" title-item-class="px-3" lazy>
             <div class="p-3">
               <StudentDiets @create="onCreateDiet" />
@@ -76,6 +81,7 @@ import StudentTrainings from '@/components/student/StudentTrainings.vue'
 import StudentDiets from '@/components/student/StudentDiets.vue'
 import StudentSettings from '@/components/student/StudentSettings.vue'
 import StudentAIAnalysis from '@/components/student/StudentAIAnalysis.vue'
+import AnamneseResponsesList from '@/components/anamnese/AnamneseResponsesList.vue'
 
 export default {
   name: 'StudentDetails',
@@ -88,6 +94,7 @@ export default {
     StudentDiets,
     StudentSettings,
     StudentAIAnalysis,
+    AnamneseResponsesList,
   },
   data() {
     return {

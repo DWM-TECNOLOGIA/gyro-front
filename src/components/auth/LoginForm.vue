@@ -72,12 +72,20 @@ export default {
       if (this.v$.$invalid) return
 
       try {
-        await this.login({
+        const { user } = await this.login({
           email: this.email,
           password: this.password,
         })
         this.handleNotification('success', 'Login realizado com sucesso')
-        this.$router.push({ name: 'students' })
+        const profile =
+          user?.profile ||
+          JSON.parse(localStorage.getItem('user') || 'null')?.profile ||
+          JSON.parse(localStorage.getItem('user') || 'null')?.user?.profile
+        if (profile === 'client') {
+          this.$router.push({ name: 'client-home' })
+        } else {
+          this.$router.push({ name: 'students' })
+        }
       } catch ({ message }) {
         this.handleNotification('error', message)
       }

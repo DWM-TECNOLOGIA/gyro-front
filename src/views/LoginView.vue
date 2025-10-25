@@ -4,7 +4,7 @@
       <BRow class="justify-content-start h-100">
         <BCol cols="12" md="6" lg="5" xl="4" class="p-0 m-0 h-100">
           <BCard no-body class="login-card p-0 m-0 h-100">
-            <BCardBody class="p-4 d-flex flex-column justify-content-center">
+            <BCardBody class="p-4 d-flex flex-column justify-content-start">
               <template v-if="!showCreateForm && !showResetForm">
                 <h5 class="mb-3">Entrar</h5>
                 <p class="mb-3 subtitle">
@@ -68,6 +68,7 @@ export default {
     handleActionSuccess() {
       this.showResetForm = false
       this.showCreateForm = false
+      this.$router.push({ name: 'login' })
     },
   },
 }
@@ -123,6 +124,8 @@ export default {
     .card-body {
       gap: 16px;
       overflow-y: auto;
+      scroll-padding-top: 16px;
+      padding-top: 16px;
 
       .subtitle {
         font-size: 16px;

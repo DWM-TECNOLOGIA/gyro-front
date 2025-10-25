@@ -23,6 +23,15 @@
         <template #actions="{ item }">
           <BButton
             variant="link"
+            class="p-0 me-3"
+            v-b-tooltip.hover
+            title="Enviar anamnese"
+            @click.stop="handleOpenAnamneseRes(item)"
+          >
+            Anamnese
+          </BButton>
+          <BButton
+            variant="link"
             class="p-0 text-primary"
             v-b-tooltip.hover
             title="Ver detalhes"
@@ -108,15 +117,26 @@
       >?
     </p>
   </ConfirmModal>
+
+  <!-- Modal Anamnese Response -->
+  <AnamneseResponseModal
+    :show="showAnamneseResModal"
+    @update:show="(v) => (showAnamneseResModal = v)"
+    variantType="by-student"
+    :clientId="anamneseResClient?.id"
+    :clientName="anamneseResClient?.name"
+  />
 </template>
 
 <script>
 import { useVuelidate } from '@vuelidate/core'
 import { studentValidations } from '@/validators/student.validator'
 import { mapGetters, mapActions } from 'vuex'
+import AnamneseResponseModal from '@/components/anamnese/AnamneseResponseModal.vue'
 
 export default {
   name: 'UsersView',
+  components: { AnamneseResponseModal },
   setup() {
     return { v$: useVuelidate() }
   },
@@ -129,6 +149,7 @@ export default {
       isLoading: false,
       showModal: false,
       showDeleteModal: false,
+      showAnamneseResModal: false,
       formType: 'Novo',
       form: {
         cellphone: '',
@@ -138,6 +159,7 @@ export default {
         profile: 'student',
       },
       selectedStudent: null,
+      anamneseResClient: null,
       students: [],
       userColumns: [
         { key: 'avatar', label: '' },
@@ -313,6 +335,13 @@ export default {
         name: 'student-details',
         params: { id: this.cleanPhoneNumber(student.cellphone) },
       })
+    },
+    handleOpenAnamneseRes(student) {
+      this.anamneseResClient = {
+        id: this.cleanPhoneNumber(student.cellphone),
+        name: student.name,
+      }
+      this.showAnamneseResModal = true
     },
   },
 }
